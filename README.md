@@ -53,7 +53,15 @@ These are 2 drivers that bind to PCI devices so they are free from the host. VFI
 
 First add the drivers to your initramfs with Dracut.
 ```sh
-$ sudo dracut --add-drivers "vfio vfio-pci vfio_iommu_type1" --force
+$ sudo vim /etc/dracut.conf.d/vfio.conf
+```
+Add this to that file:
+```
+add_drivers+=" vfio vfio_iommu_type1 vfio_pci vfio_virqfd "
+```
+And remake the initramfs.
+```sh
+$ sudo dracut -f
 ```
 
 Then we need to edit your kernel parameters in GRUB.
@@ -187,4 +195,4 @@ Try to access your shared folder from your guest using this address: **\\192.168
 **TODO**: Explain how to set up everything with help of this project: (https://github.com/foxlet/macOS-Simple-KVM/)
 
 # Improving performance
-**TODO**: Explain how CPU pinning works and other things that I find useful.
+This guide has a lot of info: (https://mathiashueber.com/performance-tweaks-gaming-on-virtual-machines/)
