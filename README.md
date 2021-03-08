@@ -6,19 +6,10 @@ Here I'll post the methods I used to run a Windows 10 and OSX Catalina installs 
 You need:
  - Fedora 33 Workstation on your system
  - Two GPUs in different IOMMU groups (I will explain that later)
- - A KVM Switch (I'm using this one [PW-SH0201B](https://www.amazon.es/gp/product/B07M6YVYST/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1), it even has keyboard bindings to switch gpus and mouse/keyboard and includes all the cables)
 
 Optional for audio
  - Male to Male Jack cable
  - Usb soundcard
-
-
-# Installing the software
-Just install this group, it contains everything you need. And add yourself to the **libvirt** group.
-```sh
-sudo dnf install @virtualization
-sudo usermod -a -G libvirt YOUR_USERNAME
-```
 
 # Enabling IOMMU
 This is crucial, you need to enable the IOMMU option in your motherboard's BIOS.
@@ -146,53 +137,3 @@ Reset pulse or login and out and you should have the interface enabled. Configur
 ```sh
 $ sudo dnf install pavucontrol
 ```
-
-# Setting up Samba for sharing files.
-For samba we need to install the samba server, configure it and create an isolated network to connect from the guest to the host. We also need to add a firewall rule.
-Start with:
-```sh
-$ sudo dnf install samba
-$ sudo smbpasswd -a YOUR_USERNAME
-$ sudo vim /etc/samba/smb.conf
-```
-There, paste this config editing it to your needs. (Check the interface name so it matches with your isolated network one)
-
-```ini
-[global]
-	workgroup = SAMBA
-	security = user
-	passdb backend = tdbsam
-	bind interfaces only = yes
-	force user = YOUR_USERNAME
-
-[VMshare]
-	path = /home/absurd/VMshare # Here the path you want.
-	browseable = yes
-	read only = no
-	force create mode = 0660
-	force directory mode = 2770
-	valid users = @YOUR_USERNAME
-```
-If you want to have the shared folder inside your home directory, apply this SELinux rule.
-
-```sh
-$ sudo setsebool -P samba_enable_home_dirs on
-```
-
-Add a firewall exception to the libvirt firewall zone.
-```sh
-$ sudo firewall-cmd --zone=libvirt --add-service=samba --permanent
-$ sudo firewall-cmd --reload
-```
-Start and enable samba.
-```sh
-$ sudo systemctl start smb.service
-$ sudo systemctl enable smb.service
-```
-Try to access your shared folder from your guest using this address: **\\192.168.110.1**
-
-# OSX Host with GPU passthrough
-**TODO**: Explain how to set up everything with help of this project: (https://github.com/foxlet/macOS-Simple-KVM/)
-
-# Improving performance
-This guide has a lot of info: (https://mathiashueber.com/performance-tweaks-gaming-on-virtual-machines/)
