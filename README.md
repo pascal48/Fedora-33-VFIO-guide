@@ -44,7 +44,7 @@ These are 2 drivers that bind to PCI devices so they are free from the host. VFI
 
 First add the drivers to your initramfs with Dracut.
 ```sh
-$ sudo vim /etc/dracut.conf.d/vfio.conf
+$ sudo nano /etc/dracut.conf.d/vfio.conf
 ```
 Add this to that file:
 ```
@@ -57,7 +57,7 @@ $ sudo dracut -f
 
 Then we need to edit your kernel parameters in GRUB.
 ```sh
-$ sudo vim /etc/default/grub
+$ sudo nano /etc/default/grub
 ```
 
 Remember the GPU_ID1, GPU_ID2 and USB_ID from before? Now it's time to use them.
@@ -107,7 +107,7 @@ Activate with this:
 
 When you have everything installed and working we can move to the next step.
 
-# Audio with low latency (loopback interface with pulseaudio)
+# Audio with low latency (loopback interface with pulseaudio, optional)
 The idea is to connect the output jack of your USB soundcard into the line-in jack (NOT THE MICROPHONE) of your motherboard.
 
 We now we need to find out the ID of the input jack so we can create the loopback device. Use pacmd.
